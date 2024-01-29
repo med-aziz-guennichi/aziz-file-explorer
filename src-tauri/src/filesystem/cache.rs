@@ -153,11 +153,7 @@ pub fn save_system_cache(state_mux: &StateSafe) {
 fn save_to_cache(state: &mut MutexGuard<AppState>) {
     let serialized_cache = serde_bencode::to_string(&state.system_cache).unwrap();
 
-    let mut file = fs::OpenOptions::new()
-        .write(true)
-        .truncate(true)
-        .open(&CACHE_FILE_PATH[..])
-        .unwrap();
+    let mut file = fs::OpenOptions::new().write(true).truncate(true).open(&CACHE_FILE_PATH[..]).unwrap();
 
     file.write_all(
         &zstd::encode_all(serialized_cache.as_bytes(), 0)

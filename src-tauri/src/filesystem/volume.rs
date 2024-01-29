@@ -43,13 +43,7 @@ impl Volume {
 
         let mountpoint = disk.mount_point().to_path_buf();
 
-        Self {
-            name,
-            available_gb,
-            used_gb,
-            total_gb,
-            mountpoint,
-        }
+        Self {name,available_gb,used_gb,total_gb,mountpoint}
     }
 
     /// This traverses the provided volume and adds the file structure to the cache in memory.
@@ -63,11 +57,7 @@ impl Volume {
 
         let system_cache = Arc::new(Mutex::new(volume));
 
-        WalkDir::new(self.mountpoint.clone())
-            .into_iter()
-            .par_bridge()
-            .filter_map(Result::ok)
-            .for_each(|entry| {
+        WalkDir::new(self.mountpoint.clone()).into_iter().par_bridge().filter_map(Result::ok).for_each(|entry| {
                 let file_name = entry.file_name().to_string_lossy().to_string();
                 let file_path = entry.path().to_string_lossy().to_string();
 
@@ -132,10 +122,7 @@ pub async fn get_volumes(state_mux: State<'_, StateSafe>) -> Result<Vec<Volume>,
         File::create(&CACHE_FILE_PATH[..]).unwrap();
     }
 
-    let volumes = sys
-        .disks()
-        .iter()
-        .map(|disk| {
+    let volumes = sys.disks().iter().map(|disk| {
             let volume = Volume::from(disk);
 
             if !cache_exists {

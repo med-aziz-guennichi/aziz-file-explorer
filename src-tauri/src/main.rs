@@ -31,17 +31,7 @@ pub type StateSafe = Arc<Mutex<AppState>>;
 
 #[tokio::main]
 async fn main() {
-    tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![
-            get_volumes,
-            open_directory,
-            search_directory,
-            open_file,
-            create_file,
-            create_directory,
-            rename_file,
-            delete_file
-        ])
+    tauri::Builder::default().invoke_handler(tauri::generate_handler![get_volumes,open_directory,search_directory,open_file,create_file,create_directory,rename_file,delete_file])
         .manage(Arc::new(Mutex::new(AppState::default())))
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
